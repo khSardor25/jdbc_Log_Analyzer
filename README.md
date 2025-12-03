@@ -38,3 +38,4 @@ The CLI currently instantiates `DatabaseService`, `AnalyticsService`, `LogParser
 
 
 
+# log_analyzer_javaCore
