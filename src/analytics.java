@@ -127,7 +127,7 @@ public class analytics {
 
             if (rs.next()) {
                 long errors = rs.getLong("errors_5xx");
-                long total = getTotalRequests();  // можно добавить отдельно или посчитать
+                long total = getTotalRequests();  
 
                 System.out.printf("Errors (500–599): %,d%n", errors);
 
@@ -186,7 +186,7 @@ public class analytics {
                 Timestamp hour = rs.getTimestamp("hour");
                 long requests = rs.getLong("requests");
 
-                // Форматируем время красиво: 2025-11-25 14:00
+              
                 String formattedHour = hour.toLocalDateTime()
                         .truncatedTo(java.time.temporal.ChronoUnit.HOURS)
                         .toString()
