@@ -28,14 +28,4 @@ export DB_USER=postgres
 export DB_PASSWORD=password
 ```
 
-### Next Steps for GUI Work
 
-The CLI currently instantiates `DatabaseService`, `AnalyticsService`, `LogParser`, and `FileIngestionService`. A GUI can reuse the same services (they are stateless) or wrap them behind controllers without touching JDBC or parsing internals.
-
-- Inject `DatabaseConfig.fromEnvironment()` once and share it.
-- Reuse `LogParser.parseLine` for client-side validation before persisting.
-- `AnalyticsService` exposes methods (`showTopIp`, `showPopularEndpoints`, etc.) that can easily return DTOs instead of printing if/when a GUI layer is added.
-
-
-
-# log_analyzer_javaCore
