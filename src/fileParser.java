@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 
 public class fileParser {
     public static void parseFileFast(String filePath) {
-        System.out.println("Парсим файл многопоточно: " + filePath);
+        System.out.println("Parsing file in multiple threads" + filePath);
         long start = System.currentTimeMillis();
 
         String url = "jdbc:postgresql://localhost:5432/postgres";
@@ -29,7 +29,7 @@ public class fileParser {
 
             conn.setAutoCommit(false);
 
-            // Вот и вся магия — всё в ОДНОМ соединении!
+          
             Files.lines(Paths.get(filePath))
                     .parallel()
                     .map(log_analyzer::checker)
@@ -46,7 +46,7 @@ public class fileParser {
                             ps.addBatch();
 
                         } catch (Exception e) {
-                            // просто пропускаем плохие строки
+                            
                         }
                     });
 
@@ -67,11 +67,11 @@ public class fileParser {
     }
 
     public static void parseFromUrl(String urlString) {
-        System.out.println("Скачиваем лог по ссылке: " + urlString);
+        System.out.println("Downloading log with: " + urlString);
         long start = System.currentTimeMillis();
 
         try {
-            // Скачиваем файл во временную папку
+           
             URL url = new URI(urlString).toURL();
             Path tempFile = Files.createTempFile("remote-log-", ".log");
 
@@ -79,21 +79,21 @@ public class fileParser {
                 Files.copy(in, tempFile, StandardCopyOption.REPLACE_EXISTING);
             }
 
-            System.out.println("Файл успешно скачан: " + tempFile.toString());
+            System.out.println("File downloaded:" + tempFile.toString());
 
-            // Запускаем твой уже готовый многопоточный парсер
+            
             parseFileFast(tempFile.toString());
 
-            // Удаляем временный файл
+       
             Files.deleteIfExists(tempFile);
 
         } catch (Exception e) {
-            System.out.println("Ошибка при скачивании или парсинге :(");
+            System.out.println("Error while downloading");
             e.printStackTrace();
         }
 
         long total = (System.currentTimeMillis() - start) / 1000;
-        System.out.println("ГОТОВО! Лог по ссылке обработан за " + total + " секунд");
+        System.out.println("Log analysed in " + total + " secs");
     }
 
 }
