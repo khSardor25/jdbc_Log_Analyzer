@@ -1,9 +1,11 @@
+package service;
 
+import entity.LogEntry;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class log_analyzer {
+public class LogAnalyzerService {
     public static LogEntry checker(String before_parse) {
         Pattern pattern = Pattern.compile("^(\\S+) \\S+ \\S+ \\[([^]]+)\\] \"(\\w+) (\\S+) HTTP[^\"]*\" (\\d{3}) (\\d+|-) .* \"([^\"]*)\"$");
         Matcher matcher = pattern.matcher(before_parse);

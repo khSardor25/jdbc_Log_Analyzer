@@ -1,8 +1,11 @@
+package service;
+
+import config.DatabaseConfig;
 
 import java.sql.*;
 import java.util.Scanner;
 
-public class analytics {
+public class AnalyticsService {
     public static void analytics_menu(){
         Scanner scanner66 = new Scanner(System.in);
 
@@ -111,9 +114,9 @@ public class analytics {
     }
 
     public static void errors5xx() {
-        String url = "jdbc:postgresql://localhost:5432/postgres";  // ← logsdb!
-        String user = "postgres";
-        String password = "155795";
+        String url = DatabaseConfig.getUrl();
+        String user = DatabaseConfig.getUser();
+        String password = DatabaseConfig.getPwd();
 
         String sql = "SELECT COUNT(*) AS errors_5xx FROM logs WHERE status >= 500;";
 
@@ -159,9 +162,9 @@ public class analytics {
     }
 
     public static void trafficByHour() {
-        String url = "jdbc:postgresql://localhost:5432/postgres";
-        String user = "postgres";
-        String password = "155795";
+        String url = DatabaseConfig.getUrl();
+        String user = DatabaseConfig.getUser();
+        String password = DatabaseConfig.getPwd();
 
         String sql = """
         SELECT 
