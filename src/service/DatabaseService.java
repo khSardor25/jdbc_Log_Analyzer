@@ -1,10 +1,13 @@
+package service;
+
+import config.DatabaseConfig;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class dataBaseFunc {
+public class DatabaseService {
     public static void connectionCheck(String url, String user, String pwd) {
         try (Connection conn = DriverManager.getConnection(url, user, pwd)) {
             System.out.println("==========================================");
@@ -20,9 +23,9 @@ public class dataBaseFunc {
     }
 
     public static void db_push(String id, String date, String method, String endp, String status, String bytes_sen, String u_agent) throws SQLException {
-        String url = "jdbc:postgresql://localhost:5432/postgres";
-        String user = "postgres";
-        String pwd = "155795";
+        String url = DatabaseConfig.getUrl();
+        String user = DatabaseConfig.getUser();
+        String pwd = DatabaseConfig.getPwd();
         String sql = "INSERT INTO logs (ip, timestamp, method, endpoint, status, bytes_sent, user_agent)VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (
