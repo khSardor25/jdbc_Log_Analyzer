@@ -1,90 +1,75 @@
-Log Analyzer (Maven)
+📊 Log Analyzer (Java + Maven)
 
-Log Analyzer is a console-based Java application designed for system administrators and developers to analyze server logs.
-It helps detect patterns such as DDoS attempts, top requested endpoints, and general traffic analytics using structured log processing and database storage.
+Log Analyzer is a console-based Java application that helps developers and system administrators analyze server logs.
+It parses log files, stores structured data in PostgreSQL, and performs analytics to detect traffic patterns, suspicious activity, and popular endpoints.
 
-Project Structure
+🚀 Features
+
+📄 Log Parsing – Converts raw log files into structured objects
+
+🐘 PostgreSQL Integration – Stores logs using JDBC
+
+📊 Traffic Analytics – Finds top requested endpoints
+
+🚨 Suspicious Activity Detection – Identifies abnormal IP request patterns
+
+⚙️ Environment Configuration – Uses environment variables for DB credentials
+
+🧩 Modular Architecture – Clean separation of responsibilities
+
+💻 CLI Application – Lightweight console-based execution
+
+🏗 Project Structure
 src/
 ├── config/
 │   └── DatabaseConfig.java
-│
 ├── entity/
 │   └── LogEntry.java
-│
 ├── service/
 │   ├── AnalyticsService.java
 │   ├── DatabaseService.java
 │   ├── FileParserService.java
 │   └── LogAnalyzerService.java
-│
 └── RunMain.java
+📦 Components
 
-Package Overview
-config
+DatabaseConfig – Manages PostgreSQL connection via environment variables
+LogEntry – Represents a parsed log record (IP, endpoint, timestamp, status)
+FileParserService – Parses raw log files into structured objects
+DatabaseService – Handles database storage and queries
+AnalyticsService – Performs traffic analytics and anomaly detection
+LogAnalyzerService – Coordinates parsing, storage, and analytics
+RunMain – Application entry point
 
-DatabaseConfig:
-Handles database connection configuration and reads credentials from environment variables.
+🛠 Build & Run
+Requirements
 
-entity:
-LogEntry
-Represents a single log record (IP, endpoint, timestamp, status, etc.).
-
-service:
-FileParserService
-Parses raw log files and converts them into LogEntry objects.
-
-DatabaseService
-Manages database connectivity and persistence logic.
-
-AnalyticsService
-Performs analytical computations (top endpoints, suspicious IPs, traffic statistics).
-
-LogAnalyzerService
-Orchestrates parsing, storing, and analyzing logs.
-
-
-RunMain
-Application entry point and CLI controller.
-
-Features:
-Log file parsing,
-PostgreSQL integration,
-Detection of suspicious traffic patterns,
-Top endpoints and request statistics,
-Environment-based configuration,
-CLI-based execution
-
-Build & Run:
-Prerequisites
-
-Java 17+ (or your configured version)
+Java 17+
 
 Maven
 
 PostgreSQL
 
-If Maven is not installed:
-sudo apt install maven
-
-Build:
+Build
 mvn clean package
-
-Run:
+Run
 java -jar target/log-AnalyticsService-1.0-SNAPSHOT.jar
+🗄 Database Configuration
 
-
-Database Configuration
-The application reads database credentials from environment variables.
+The application reads credentials from environment variables:
 
 export DB_URL=jdbc:postgresql://localhost:5432/postgres
 export DB_USER=postgres
 export DB_PASSWORD=password
 
-No hardcoded credentials are used.
+No credentials are hardcoded in the source code.
 
+📌 Notes
 
-Notes:
-This is a console (CLI) application,
-Designed with separation of concerns (config / entity / service),
-Easily extensible for new analytics modules,
-Suitable for educational, experimental, and sysadmin use
+Console-based Java application
+
+Designed with separation of concerns
+
+Easily extensible with new analytics modules
+
+Suitable for learning backend development and log analytics
