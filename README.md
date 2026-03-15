@@ -19,18 +19,7 @@ It parses log files, stores structured data in PostgreSQL, and performs analytic
 
 💻 CLI Application – Lightweight console-based execution
 
-🏗 Project Structure
-src/
-├── config/
-│   └── DatabaseConfig.java
-├── entity/
-│   └── LogEntry.java
-├── service/
-│   ├── AnalyticsService.java
-│   ├── DatabaseService.java
-│   ├── FileParserService.java
-│   └── LogAnalyzerService.java
-└── RunMain.java
+
 📦 Components
 
 DatabaseConfig – Manages PostgreSQL connection via environment variables
