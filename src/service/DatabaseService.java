@@ -44,7 +44,11 @@ public class DatabaseService {
             prStm.setString(3, method);
             prStm.setString(4, endpoint);
             prStm.setInt(5, Integer.parseInt(status));
-            prStm.setString(6, String.valueOf(Integer.parseInt(bytesSent)));
+
+            // Handle "-" in bytesSent
+            int bytes = bytesSent.equals("-") ? 0 : Integer.parseInt(bytesSent);
+            prStm.setInt(6, bytes);
+
             prStm.setString(7, userAgent);
             prStm.executeUpdate();
             conn.commit();

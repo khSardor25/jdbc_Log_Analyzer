@@ -57,7 +57,7 @@ public class RunMain {
                     LogEntry myLog = LogAnalyzerService.checker(logInput);
 
                     if (myLog == null) {
-                        break;
+                        break; // This break is within 'case 3' block, it just breaks out of the switch, returns to the while loop
                     }
 
                     System.out.print("Do you want to push this Log into Database Y/N: ");

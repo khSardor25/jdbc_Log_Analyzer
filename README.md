@@ -1,64 +1,126 @@
-📊 Log Analyzer (Java + Maven)
+# 📊 Log Analyzer (Java)
 
-Log Analyzer is a console-based Java application that helps developers and system administrators analyze server logs.
-It parses log files, stores structured data in PostgreSQL, and performs analytics to detect traffic patterns, suspicious activity, and popular endpoints.
+Log Analyzer is a professional console-based Java application designed for high-performance server log analysis. It parses standard raw log files, stores them in a structured PostgreSQL database, and provides insightful analytics including traffic patterns, endpoint popularity, and error rate detection.
 
-🚀 Features
+## 🚀 Features
 
-📄 Log Parsing – Converts raw log files into structured objects
+-   **📄 Efficient Log Parsing** – Converts complex raw log entries into structured Java objects using robust Regex patterns.
+-   **🐘 PostgreSQL Integration** – High-performance storage using JDBC with batch processing for bulk imports.
+-   **📊 Advanced Analytics**:
+    -   **Top 10 Active IPs**: Identify the most frequent visitors.
+    -   **Top 10 Popular Endpoints**: Discover the most requested resources.
+    -   **Error Rate Analysis**: Monitor Internal Server Errors (5XX) and their percentage of total traffic.
+    -   **Hourly Traffic Trends**: Analyze request volume over time using PostgreSQL's time-series functions.
+-   **⚙️ Flexible Configuration** – Seamlessly switch environments using environment variables for database credentials.
+-   **🛡️ Performance & Reliability** – Thread-safe database interactions and optimized batch inserts for large log files.
+-   **💻 User-Friendly CLI** – Interactive command-line interface for ease of use.
 
-🐘 PostgreSQL Integration – Stores logs using JDBC
+## 📋 Prerequisites
 
-📊 Traffic Analytics – Finds top requested endpoints
+Before you start, ensure you have the following installed:
 
-🚨 Suspicious Activity Detection – Identifies abnormal IP request patterns
+-   **Java Development Kit (JDK) 17 or higher**
+-   **PostgreSQL Database Server**
+-   **PostgreSQL JDBC Driver** (included in the `lib/` directory)
 
-⚙️ Environment Configuration – Uses environment variables for DB credentials
+---
 
-🧩 Modular Architecture – Clean separation of responsibilities
+## 🛠 Setup & Configuration
 
-💻 CLI Application – Lightweight console-based execution
+### 1. Database Setup
 
+You need a running PostgreSQL instance. Create a table named `logs` using the following SQL schema:
 
-📦 Components
+```sql
+CREATE TABLE logs (
+    id SERIAL PRIMARY KEY,
+    ip VARCHAR(45),
+    timestamp TIMESTAMP,
+    method VARCHAR(10),
+    endpoint TEXT,
+    status INT,
+    bytes_sent BIGINT,
+    user_agent TEXT
+);
+```
 
-DatabaseConfig – Manages PostgreSQL connection via environment variables
-LogEntry – Represents a parsed log record (IP, endpoint, timestamp, status)
-FileParserService – Parses raw log files into structured objects
-DatabaseService – Handles database storage and queries
-AnalyticsService – Performs traffic analytics and anomaly detection
-LogAnalyzerService – Coordinates parsing, storage, and analytics
-RunMain – Application entry point
+### 2. Environment Variables
 
-🛠 Build & Run
-Requirements
+The application is designed for security and flexibility. Configure your database connection by setting the following environment variables:
 
-Java 17+
+| Variable | Description | Default Value |
+| :--- | :--- | :--- |
+| `DB_URL` | The JDBC connection string | `jdbc:postgresql://localhost:5432/postgres` |
+| `DB_USER` | Database username | `postgres` |
+| `DB_PASSWORD` | Database password | `155795` |
 
-Maven
+**Example (Linux/macOS):**
+```bash
+export DB_URL=jdbc:postgresql://your_host:5432/your_db
+export DB_USER=your_username
+export DB_PASSWORD=your_password
+```
 
-PostgreSQL
+**Example (Windows PowerShell):**
+```powershell
+$env:DB_URL="jdbc:postgresql://your_host:5432/your_db"
+$env:DB_USER="your_username"
+$env:DB_PASSWORD="your_password"
+```
 
-Build
-mvn clean package
-Run
-java -jar target/log-AnalyticsService-1.0-SNAPSHOT.jar
-🗄 Database Configuration
+---
 
-The application reads credentials from environment variables:
+## 🏗 Build & Run
 
-export DB_URL=jdbc:postgresql://localhost:5432/postgres
-export DB_USER=postgres
-export DB_PASSWORD=password
+### Manual Compilation
 
-No credentials are hardcoded in the source code.
+Since this project uses manual dependency management, compile it from the root directory:
 
-📌 Notes
+```bash
+# Create an output directory
+mkdir -p out
 
-Console-based Java application
+# Compile the source code
+javac -cp "lib/*:src" src/RunMain.java src/config/*.java src/entity/*.java src/service/*.java -d out
+```
 
-Designed with separation of concerns
+### Running the Application
 
-Easily extensible with new analytics modules
+Once compiled, you can launch the application:
 
-Suitable for learning backend development and log analytics
+```bash
+java -cp "lib/*:out" RunMain
+```
+
+---
+
+## 📂 Project Structure
+
+-   `src/RunMain.java` – Entry point of the application.
+-   `src/config/DatabaseConfig.java` – Centralized configuration management.
+-   `src/entity/LogEntry.java` – Data model for log records.
+-   `src/service/`
+    -   `DatabaseService.java` – Handles JDBC connections and push operations.
+    -   `FileParserService.java` – High-speed file parsing and batch database insertion.
+    -   `LogAnalyzerService.java` – Regex-based parsing logic.
+    -   `AnalyticsService.java` – SQL-driven data analysis and reporting.
+-   `lib/` – Contains required external libraries (PostgreSQL Driver).
+
+---
+
+## 📌 Usage Guide
+
+1.  **Check Connection**: Test your database connectivity before starting.
+2.  **Parse String**: Manually paste a single log line to verify parsing logic.
+3.  **Parse File**: Provide a path to a log file for bulk import. The application uses batch processing for maximum speed.
+4.  **See Analytics**: View generated reports on your log data.
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request or open an issue for any bugs or feature requests.
+
+---
+
+*This project was refactored for improved performance, removal of code duplication, and better maintainability.*
