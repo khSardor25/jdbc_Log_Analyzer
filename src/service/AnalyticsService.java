@@ -43,21 +43,11 @@ public class AnalyticsService {
 
     }
 
-
-
-
-
-
-
-
     public static void topIp() {
-        String url = "jdbc:postgresql://localhost:5432/postgres";
-        String user = "postgres";
-        String password = "155795";
         String sql = "SELECT ip, COUNT(*) as cnt FROM logs GROUP BY ip ORDER BY cnt DESC LIMIT 10;";
 
         try (
-                Connection conn = DriverManager.getConnection(url, user, password);
+                Connection conn = DatabaseService.getConnection();
                 Statement stmt = conn.createStatement();
                 ResultSet rs = stmt.executeQuery(sql);
         ) {
@@ -81,12 +71,8 @@ public class AnalyticsService {
 
     }
     public static void popular_endpoints(){
-        String url = "jdbc:postgresql://localhost:5432/postgres";
-        String user = "postgres";
-        String pwd = "155795";
-
         String sql = "SELECT endpoint, COUNT(*) as hits FROM logs GROUP BY endpoint ORDER BY hits DESC LIMIT 10;";
-        try(Connection conn = DriverManager.getConnection(url,user,pwd);
+        try(Connection conn = DatabaseService.getConnection();
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
         ){
@@ -114,13 +100,9 @@ public class AnalyticsService {
     }
 
     public static void errors5xx() {
-        String url = DatabaseConfig.getUrl();
-        String user = DatabaseConfig.getUser();
-        String password = DatabaseConfig.getPwd();
-
         String sql = "SELECT COUNT(*) AS errors_5xx FROM logs WHERE status >= 500;";
 
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DatabaseService.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
@@ -151,8 +133,7 @@ public class AnalyticsService {
 
     private static long getTotalRequests() {
         String sql = "SELECT COUNT(*) FROM logs";
-        try (Connection conn = DriverManager.getConnection(
-                "jdbc:postgresql://localhost:5432/logsdb", "postgres", "155795");
+        try (Connection conn = DatabaseService.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             return rs.next() ? rs.getLong(1) : 0;
@@ -162,10 +143,6 @@ public class AnalyticsService {
     }
 
     public static void trafficByHour() {
-        String url = DatabaseConfig.getUrl();
-        String user = DatabaseConfig.getUser();
-        String password = DatabaseConfig.getPwd();
-
         String sql = """
         SELECT 
             date_trunc('hour', timestamp::timestamp) AS hour,
@@ -175,7 +152,7 @@ public class AnalyticsService {
         ORDER BY hour;
         """;
 
-        try (Connection conn = DriverManager.getConnection(url, user, password);
+        try (Connection conn = DatabaseService.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
 
@@ -206,8 +183,4 @@ public class AnalyticsService {
         }
     }
 
-
-
-
 }
-

@@ -1,50 +1,56 @@
 package service;
 
 import config.DatabaseConfig;
+import entity.LogEntry;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.util.stream.Stream;
 
 public class FileParserService {
     public static void parseFileFast(String filePath) {
-        System.out.println("Parsing file in multiple threads" + filePath);
+        System.out.println("Parsing file: " + filePath);
         long start = System.currentTimeMillis();
-
-        String url = DatabaseConfig.getUrl();
-        String user = DatabaseConfig.getUser();
-        String password = DatabaseConfig.getPwd();
 
         String sql = "INSERT INTO logs (ip, timestamp, method, endpoint, status, bytes_sent, user_agent) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = DriverManager.getConnection(url, user, password);
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DatabaseService.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             Stream<String> lines = Files.lines(Paths.get(filePath))) {
 
             conn.setAutoCommit(false);
 
-          
-            Files.lines(Paths.get(filePath))
-                    .parallel()
-                    .map(LogAnalyzerService::checker)
-                    .forEach(entry -> {
-                        try {
-                            ps.setString(1, entry.ip);
-                            ps.setString(2, entry.timestamp);
-                            ps.setString(3, entry.method);
-                            ps.setString(4, entry.endpoint);
-                            ps.setInt(5, Integer.parseInt(entry.status));
-                            ps.setInt(6, entry.bytesSent.equals("-") ? 0 : Integer.parseInt(entry.bytesSent));
-                            ps.setString(7, entry.userAgent);
+            int count = 0;
+            int batchSize = 1000;
 
-                            ps.addBatch();
+            // Using sequential stream to ensure thread-safety with PreparedStatement and Connection
+            Iterable<String> iterable = lines::iterator;
+            for (String line : iterable) {
+                LogEntry entry = LogAnalyzerService.checker(line, true);
+                if (entry != null) {
+                    try {
+                        ps.setString(1, entry.getIp());
+                        ps.setString(2, entry.getTimestamp());
+                        ps.setString(3, entry.getMethod());
+                        ps.setString(4, entry.getEndpoint());
+                        ps.setInt(5, Integer.parseInt(entry.getStatus()));
+                        ps.setInt(6, entry.getBytesSent().equals("-") ? 0 : Integer.parseInt(entry.getBytesSent()));
+                        ps.setString(7, entry.getUserAgent());
 
-                        } catch (Exception e) {
-                            
+                        ps.addBatch();
+                        count++;
+
+                        if (count % batchSize == 0) {
+                            ps.executeBatch();
                         }
-                    });
+                    } catch (Exception e) {
+                        // Skip problematic lines
+                    }
+                }
+            }
 
             ps.executeBatch();
             conn.commit();
@@ -52,15 +58,11 @@ public class FileParserService {
             long totalMillis = System.currentTimeMillis() - start;
 
             System.out.println("==========================================");
-
-            System.out.println("Ineserted in: "
-                    + (totalMillis / 1000.0) + " secs");
+            System.out.println("Inserted " + count + " entries in: " + (totalMillis / 1000.0) + " secs");
             System.out.println("==========================================\n");
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-
 }

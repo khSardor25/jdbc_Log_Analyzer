@@ -23,6 +23,10 @@ public class RunMain {
             System.out.println("Press 5 to quit");
             System.out.print("Respond: ");
 
+            if (!scanner.hasNextInt()) {
+                scanner.next(); // consume invalid input
+                continue;
+            }
             int respond = scanner.nextInt();
             scanner.nextLine(); // consume newline
 
@@ -52,19 +56,23 @@ public class RunMain {
 
                     LogEntry myLog = LogAnalyzerService.checker(logInput);
 
+                    if (myLog == null) {
+                        break;
+                    }
+
                     System.out.print("Do you want to push this Log into Database Y/N: ");
                     String answer = scanner.nextLine();
 
                     if (answer.equalsIgnoreCase("Y")) {
                         try {
                             DatabaseService.db_push(
-                                    myLog.ip,
-                                    myLog.timestamp,
-                                    myLog.method,
-                                    myLog.endpoint,
-                                    myLog.status,
-                                    myLog.bytesSent,
-                                    myLog.userAgent
+                                    myLog.getIp(),
+                                    myLog.getTimestamp(),
+                                    myLog.getMethod(),
+                                    myLog.getEndpoint(),
+                                    myLog.getStatus(),
+                                    myLog.getBytesSent(),
+                                    myLog.getUserAgent()
                             );
                         } catch (SQLException e) {
                             System.out.println("Database error occurred");

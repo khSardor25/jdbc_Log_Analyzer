@@ -8,6 +8,15 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class DatabaseService {
+
+    public static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(
+            DatabaseConfig.getUrl(),
+            DatabaseConfig.getUser(),
+            DatabaseConfig.getPwd()
+        );
+    }
+
     public static void connectionCheck(String url, String user, String pwd) {
         try (Connection conn = DriverManager.getConnection(url, user, pwd)) {
             System.out.println("==========================================");
@@ -22,24 +31,21 @@ public class DatabaseService {
 
     }
 
-    public static void db_push(String id, String date, String method, String endp, String status, String bytes_sen, String u_agent) throws SQLException {
-        String url = DatabaseConfig.getUrl();
-        String user = DatabaseConfig.getUser();
-        String pwd = DatabaseConfig.getPwd();
-        String sql = "INSERT INTO logs (ip, timestamp, method, endpoint, status, bytes_sent, user_agent)VALUES (?, ?, ?, ?, ?, ?, ?)";
+    public static void db_push(String ip, String date, String method, String endpoint, String status, String bytesSent, String userAgent) throws SQLException {
+        String sql = "INSERT INTO logs (ip, timestamp, method, endpoint, status, bytes_sent, user_agent) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (
-                Connection conn = DriverManager.getConnection(url, user, pwd);
+                Connection conn = getConnection();
                 PreparedStatement prStm = conn.prepareStatement(sql);
         ) {
             conn.setAutoCommit(false);
-            prStm.setString(1, id);
+            prStm.setString(1, ip);
             prStm.setString(2, date);
             prStm.setString(3, method);
-            prStm.setString(4, endp);
+            prStm.setString(4, endpoint);
             prStm.setInt(5, Integer.parseInt(status));
-            prStm.setString(6, String.valueOf(Integer.parseInt(bytes_sen)));
-            prStm.setString(7, u_agent);
+            prStm.setString(6, String.valueOf(Integer.parseInt(bytesSent)));
+            prStm.setString(7, userAgent);
             prStm.executeUpdate();
             conn.commit();
             System.out.println("==========================================");
@@ -54,5 +60,3 @@ public class DatabaseService {
 
     }
 }
-
-
