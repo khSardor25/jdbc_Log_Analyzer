@@ -9,13 +9,9 @@ public class DatabaseConfig {
     public static String getPwd() {
             return pwd;
     }
-
-
     public static String getUser(){
         return user;
     }
-
-
     public static String getUrl(){
         return url;
     }
