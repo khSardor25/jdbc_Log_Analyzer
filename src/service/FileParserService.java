@@ -6,10 +6,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.stream.Stream;
 
 public class FileParserService {
-    public static void parseFileFast(String filePath) {
+    public static void parseFileFast(String filePath) throws SQLException {
         System.out.println("Parsing file: " + filePath);
         long start = System.currentTimeMillis();
 

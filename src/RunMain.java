@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 public class RunMain {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Welcome to log analyser !!!");
 
