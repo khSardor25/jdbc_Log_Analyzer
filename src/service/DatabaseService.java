@@ -1,13 +1,22 @@
 package service;
 
 import config.DatabaseConfig;
+import entity.LogEntry;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Locale;
 
 public class DatabaseService {
+    static final String INSERT_SQL = "INSERT INTO logs (ip, timestamp, method, endpoint, status, bytes_sent, user_agent) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    private static final DateTimeFormatter LOG_TIMESTAMP_FORMAT =
+            DateTimeFormatter.ofPattern("dd/MMM/yyyy:HH:mm:ss Z", Locale.ENGLISH);
 
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(
@@ -31,36 +40,79 @@ public class DatabaseService {
 
     }
 
-    public static void db_push(String ip, String date, String method, String endpoint, String status, String bytesSent, String userAgent) throws SQLException {
-        String sql = "INSERT INTO logs (ip, timestamp, method, endpoint, status, bytes_sent, user_agent) VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-        try (
-                Connection conn = getConnection();
-                PreparedStatement prStm = conn.prepareStatement(sql);
-        ) {
+    public static void db_push(LogEntry entry) throws SQLException {
+        Connection conn = getConnection();
+        try (conn; PreparedStatement prStm = conn.prepareStatement(INSERT_SQL)) {
             conn.setAutoCommit(false);
-            prStm.setString(1, ip);
-            prStm.setString(2, date);
-            prStm.setString(3, method);
-            prStm.setString(4, endpoint);
-            prStm.setInt(5, Integer.parseInt(status));
-
-            // Handle "-" in bytesSent
-            int bytes = bytesSent.equals("-") ? 0 : Integer.parseInt(bytesSent);
-            prStm.setInt(6, bytes);
-
-            prStm.setString(7, userAgent);
+            if (!bindLog(prStm, entry)) {
+                System.out.println("==========================================");
+                System.out.println("Invalid log entry, nothing inserted");
+                System.out.println("==========================================\n");
+                return;
+            }
             prStm.executeUpdate();
             conn.commit();
             System.out.println("==========================================");
             System.out.println("Inserted succesfully");
             System.out.println("==========================================\n");
         } catch (SQLException e) {
-            System.out.println("==========================================");
-            System.out.println("Something went wrong");
-            System.out.println("==========================================\n");
-            e.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ignored) {
+                // best-effort rollback
+            }
+            throw e;
+        }
+    }
+
+    public static void db_push(String ip, String date, String method, String endpoint, String status, String bytesSent, String userAgent) throws SQLException {
+        db_push(new LogEntry(ip, date, method, endpoint, status, bytesSent, userAgent));
+    }
+
+    static boolean bindLog(PreparedStatement prStm, LogEntry entry) throws SQLException {
+        Timestamp ts = parseTimestamp(entry.getTimestamp());
+        Integer status = parseInt(entry.getStatus());
+        Long bytes = parseBytes(entry.getBytesSent());
+
+        if (ts == null || status == null || bytes == null) {
+            return false;
         }
 
+        prStm.setString(1, entry.getIp());
+        prStm.setTimestamp(2, ts);
+        prStm.setString(3, entry.getMethod());
+        prStm.setString(4, entry.getEndpoint());
+        prStm.setInt(5, status);
+        prStm.setLong(6, bytes);
+        prStm.setString(7, entry.getUserAgent());
+        return true;
+    }
+
+    private static Timestamp parseTimestamp(String raw) {
+        try {
+            OffsetDateTime odt = OffsetDateTime.parse(raw, LOG_TIMESTAMP_FORMAT);
+            return Timestamp.from(odt.toInstant());
+        } catch (DateTimeParseException e) {
+            return null;
+        }
+    }
+
+    private static Integer parseInt(String value) {
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    private static Long parseBytes(String value) {
+        if ("-".equals(value)) {
+            return 0L;
+        }
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 }

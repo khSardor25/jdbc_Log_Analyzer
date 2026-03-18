@@ -1,7 +1,5 @@
 package service;
 
-import config.DatabaseConfig;
-
 import java.sql.*;
 import java.util.Scanner;
 
@@ -17,6 +15,11 @@ public class AnalyticsService {
             System.out.println("Press 4 to see hourly traffic");
             System.out.println("Press 5 to quit");
             System.out.print("Respond: ");
+            if (!scanner66.hasNextInt()) {
+                scanner66.nextLine();
+                System.out.println("Invalid option. Please choose 1–5.");
+                continue;
+            }
             int respond = scanner66.nextInt();
             switch(respond){
                 case 5:
@@ -35,7 +38,9 @@ public class AnalyticsService {
                 case 4:
                     trafficByHour();
                     break;
-
+                default:
+                    System.out.println("Invalid option. Please choose 1–5.");
+                    break;
             }
 
 
@@ -118,7 +123,7 @@ public class AnalyticsService {
 
                 if (total > 0) {
                     double percent = 100.0 * errors / total;
-                    System.out.printf("Rate errors / totalt: %.4f%%%n", percent);
+                    System.out.printf("Error rate: %.4f%%%n", percent);
                 }
             }
 

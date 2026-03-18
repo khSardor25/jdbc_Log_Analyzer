@@ -6,13 +6,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LogAnalyzerService {
+    private static final Pattern LOG_PATTERN = Pattern.compile(
+            "^(\\S+) \\S+ \\S+ \\[([^]]+)\\] \"(\\w+) (\\S+) HTTP[^\"]*\" (\\d{3}) (\\d+|-) .* \"([^\"]*)\"$"
+    );
+
     public static LogEntry checker(String before_parse) {
         return checker(before_parse, false);
     }
 
     public static LogEntry checker(String before_parse, boolean silent) {
-        Pattern pattern = Pattern.compile("^(\\S+) \\S+ \\S+ \\[([^]]+)\\] \"(\\w+) (\\S+) HTTP[^\"]*\" (\\d{3}) (\\d+|-) .* \"([^\"]*)\"$");
-        Matcher matcher = pattern.matcher(before_parse);
+        Matcher matcher = LOG_PATTERN.matcher(before_parse);
         if (matcher.matches()) {
             if (!silent) {
                 System.out.println("==========================================");

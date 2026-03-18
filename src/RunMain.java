@@ -65,15 +65,7 @@ public class RunMain {
 
                     if (answer.equalsIgnoreCase("Y")) {
                         try {
-                            DatabaseService.db_push(
-                                    myLog.getIp(),
-                                    myLog.getTimestamp(),
-                                    myLog.getMethod(),
-                                    myLog.getEndpoint(),
-                                    myLog.getStatus(),
-                                    myLog.getBytesSent(),
-                                    myLog.getUserAgent()
-                            );
+                            DatabaseService.db_push(myLog);
                         } catch (SQLException e) {
                             System.out.println("Database error occurred");
                         }
