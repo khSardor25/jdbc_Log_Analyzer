@@ -116,11 +116,3 @@ java -cp "lib/*:out" RunMain
 4.  **See Analytics**: View generated reports on your log data.
 
 ---
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request or open an issue for any bugs or feature requests.
-
----
-
-*This project was refactored for improved performance, removal of code duplication, and better maintainability.*
