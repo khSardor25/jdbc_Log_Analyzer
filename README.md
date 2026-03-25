@@ -108,7 +108,7 @@ java -cp "lib/*:out" RunMain
 
 ---
 
-## 📌 Usage Guide
+## 📌 How to use
 
 1.  **Check Connection**: Test your database connectivity before starting.
 2.  **Parse String**: Manually paste a single log line to verify parsing logic.
