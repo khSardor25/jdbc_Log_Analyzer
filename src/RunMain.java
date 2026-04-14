@@ -19,7 +19,7 @@ public class RunMain {
             System.out.println("Press 1 to check the connection with Database");
             System.out.println("Press 2 to see Analytics");
             System.out.println("Press 3 to parse the String");
-            System.out.println("Press 4 to parse Logs from file (multithreading)");
+            System.out.println("Press 4 to parse logs from file (multithreaded)");
             System.out.println("Press 5 to quit");
             System.out.print("Respond: ");
 
