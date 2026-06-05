@@ -1,4 +1,4 @@
-# 📊 Log Analyzer (Java)
+# 📊 Log Analyzer 
 
 Log Analyzer is a professional console-based Java application designed for high-performance server log analysis. It parses standard raw log files, stores them in a structured PostgreSQL database, and provides insightful analytics including traffic patterns, endpoint popularity, and error rate detection.
 
